@@ -1,0 +1,4 @@
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_calculator_Qt/untitled/CMakeFiles/untitled.dir
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_calculator_Qt/untitled/CMakeFiles/edit_cache.dir
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_calculator_Qt/untitled/CMakeFiles/rebuild_cache.dir
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_calculator_Qt/untitled/CMakeFiles/untitled_autogen.dir

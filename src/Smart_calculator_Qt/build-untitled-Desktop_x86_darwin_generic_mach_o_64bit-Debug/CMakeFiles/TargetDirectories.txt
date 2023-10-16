@@ -1,0 +1,4 @@
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_Calculator_Qt/build-untitled-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/untitled.dir
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_Calculator_Qt/build-untitled-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/edit_cache.dir
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_Calculator_Qt/build-untitled-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/rebuild_cache.dir
+/Users/elmersha/C7_SmartCalc_v1.0-0/src/Smart_Calculator_Qt/build-untitled-Desktop_x86_darwin_generic_mach_o_64bit-Debug/CMakeFiles/untitled_autogen.dir

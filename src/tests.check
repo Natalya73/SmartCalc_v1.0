@@ -1,0 +1,669 @@
+#include <check.h>
+
+#include "Smart_calc.h"
+
+#define EPS 1e-7
+#define EPS2 1e-2
+/*
+double string_calc(char *string, double x_number) {
+    Nn *A = NULL;
+    polish_notation(string, &A, x_number);
+    double result = calculate(&A);
+    return result;
+}
+*/
+#test test_0
+char *string = "1.123+212.1";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 213.223, EPS);
+
+#test test_1
+char *string = "-(2+(1+1)+3)+55mod8+1.123+2.121-5*(1+1)+8";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 1.244, EPS);
+#test test_2
+char *string = "11mod3";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 2, EPS);
+#test test_3
+char *string = "5.0/6.0*7.0";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 5.8333333, EPS);
+
+#test test_4
+char *string = "2+3+(3*4)+(5.1+6.7)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 28.8, EPS);
+
+#test test_5
+char *string = "11.0+12.0*13.0";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 167, EPS);
+
+#test test_6
+char *string = "55mod8";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 7, EPS);
+
+#test test_7
+char *string = "1.0/2.0*(2.0-1.0)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 0.5, EPS);
+
+#test test_8
+char *string = "2^2^2";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 16, EPS);
+#test test_9
+char *string = "2^3^2";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 512, EPS);
+#test test_10
+char *string = "(cos(1/3)*sin(1.352^9/(4+3))/76.56)*log(150)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 0.0223863, EPS);
+#test test_11
+char *string = "cos(1/3)*sin(1.352^9/(4+3))";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 0.7876032, EPS);
+#test test_12
+char *string = "cos(431.2*2.0^2.0/8.0)";  //  cos((431.2*2.0)^2.0/8.0) priority
+                                          //  * higher than ^
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, -0.3902501, EPS);  // 2.7950166
+#test test_13
+char *string = "2+9.3-8^3/(4+56.2)";  //    2+9.3-8^3/(4+56.2)"
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 2.7950166, EPS);  //
+//
+#test test_14
+char *string = "2*x";  //
+double result = 0;
+double x_number = 3;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 6, EPS);  //
+
+#test test_15
+char *string = "1+2*x";
+double result = 0;
+double x_number = 3;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 7, EPS);
+#test test_16
+char *string = "1+sqrt(4)-1/2*sin(3^2-2)";
+double result = 0;
+double x_number = 3;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 2.6715067, EPS);
+#test test_17
+char *string = "2+sin(+3)";
+double result = 0;
+double x_number = 3;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 2.1411200, EPS);
+#test test_18
+char *string = "5+4*2/(1-5)";
+double result = 0;
+double x_number = 3;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 3, EPS);
+#test test_19
+char *string = "4+asin1";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 5.5707963, EPS);
+
+#test test_20
+char *string = "3+2+2*3";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 11, EPS);
+
+#test test_21
+char *string = "3.0/(3.0+3.0)*4.0";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 2, EPS);
+
+#test test_22
+char *string = "3*4+2+9+(6.1+7.2)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 36.3, EPS);
+
+#test test_22_a
+char *string = "3.0/2.0*(3.0-1.0)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 3, EPS);
+
+#test test_23
+char *string = "(0-1-2-(0-3)-4)-5-(0-6)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, -3, EPS);
+
+#test test_24
+char *string = "(0-1-2-(0-3)-4)-5-(0-6)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, -3, EPS);
+#test test_25
+char *string = "log9000";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, log10(9000), EPS);
+#test test_26
+char *string = "ln9000";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, log(9000), EPS);
+
+#test test_27
+char *string = "ln9000";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, log(9000), EPS);
+#test test_28
+char *string = "sqrt(4)-1/2*sin(3^2-2)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 1.6715067, EPS);
+
+#test test_29
+char *string = "sin(+4)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, sin(+4), EPS);
+
+#test test_30
+char *string = "sin(+4)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, sin(+4), EPS);
+
+#test test_31
+char *string = "-9.0mod(-4.0)";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, -9 % -4, EPS);
+
+#test test_32
+char *string = "4+4*2/(1-5)";
+double result1 = 0;
+double result2 = 4 + 4 * 2 / (1 - 5);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_33
+char *string = "1.5*4+4*2/1-5";
+double result1 = 0;
+double result2 = 1.5 * 4 + 4 * 2 / 1 - 5;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_34
+char *string = "6+4*(2.0/1.0-5)";
+double result1 = 0;
+double result2 = 6 + 4 * (2.0 / 1.0 - 5);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_35
+char *string = "4.5/2.3+(4*2/1-5)";
+double result1 = 0;
+double result2 = 4.5 / 2.3 + (4 * 2 / 1 - 5);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_36
+char *string = "4+4*(2/1)-5";
+double result1 = 0;
+double result2 = 4 + 4 * (2 / 1) - 5;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_37
+char *string = "4.25+(4*2/1)-5";
+double result1 = 0;
+double result2 = 4.25 + (4 * 2 / 1) - 5;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_38
+char *string = "3+(-(-(-(-1))))";
+double result1 = 0;
+double result2 = 3 + (-(-(-(-1))));
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_39
+char *string = "(3+3*2/1)-6";
+double result1 = 0;
+double result2 = (3 + 3 * 2 / 1) - 6;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_40
+char *string = "4+(4*2)/1-5";
+double result1 = 0;
+double result2 = 4 + (4 * 2) / 1 - 5;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_41
+char *string = "(4+4*2)/1-5";
+double result1 = 0;
+double result2 = (4 + 4 * 2) / 1 - 5;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_42
+char *string = "8*(6+7*4)+3";
+double result1 = 0;
+double result2 = 8 * (6 + 7 * 4) + 3;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_43
+char *string = "2/(3+2)*5";
+double result1 = 0;
+double result2 = 2.0 / (3 + 2) * 5;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_44
+char *string = "2+9.5-8^3/4+76.2";
+double result1 = 0;
+double result2 = 2 + 9.5 - pow(8, 3) / 4 + 76.2;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_45
+char *string = "2+9.3-8^3/(4+56.2)";
+double result1 = 0;
+double result2 = (2 + 9.3 - pow(8, 3) / (4 + 56.2));
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_46
+char *string = "(2^3)^2";
+double result1 = 0;
+double result2 = pow(pow(2, 3), 2);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_47
+char *string = "(2^3)^2";
+double result1 = 0;
+double result2 = pow(pow(2, 3), 2);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_48
+char *string = "3*sin(4+5)";
+double result1 = 0;
+double result2 = 3 * sin(4 + 5);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_49
+char *string = "431.2*2^2/8";
+double result1 = 0;
+double result2 = 431.2 * pow(2, 2) / 8;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_50
+char *string = "cos(sin(2+9*6^1.2-tan(1)))";
+double result1 = 0;
+double result2 = cos(sin(2 + 9 * pow(6, 1.2) - tan(1)));
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_51
+char *string = "sqrt(cos(sin(2+9*6^1.2-tan(1))))";
+double result1 = 0;
+double result2 = sqrt(cos(sin(2 + 9 * pow(6, 1.2) - tan(1))));
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_52
+char *string = "sqrt(cos(sin(2+9*6^1.2-tan(1))))";
+double result1 = 0;
+double result2 = sqrt(cos(sin(2 + 9 * pow(6, 1.2) - tan(1))));
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_53
+char *string = "sqrt(cos(sin(2+9*6^1.2-tan(1))))mod0.1";
+double result = 0;
+double x_number = 0;
+result = string_calc(string, x_number);
+ck_assert_double_eq_tol(result, 0.0615000, EPS);
+#test test_54
+char *string = "sqrt(2^2)*5/(4-3mod2)*(4-sqrt(81))";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, -16.6666667, EPS);
+#test test_55
+char *string = "cos(1/3)*sin(1.352^9/(4+3))";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.7876032, EPS);
+#test test_56
+char *string = "cos(6*3)/5";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.1320633, EPS);
+#test test_57
+char *string = "12.6.9+8";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+
+#test test_58
+char *string = "(22+6";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_59
+char *string = ")22+6(";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_60
+char *string = "2++6";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_61
+char *string = "()";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_62
+char *string = "(*4-5)";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_63
+char *string = "(.4-5)";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_64
+char *string = "(,4-5)";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_65
+char *string = "4-5/";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_66
+char *string = "mod)";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_67
+char *string = "mod5";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_68
+char *string = "(mod5";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_69
+char *string = "2.22.3";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_70
+char *string = "/2.223-8";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_71
+char *string = "55mod-";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_72
+char *string = "*8+8";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_73
+char *string = "8+8*";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_74
+char *string = ")+1+(";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_75
+char *string = "2.223-8/";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_76
+char *string = ")";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_77
+char *string = "(mod)";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_78
+char *string = "8(8)";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_79
+char *string = "(8)8";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_80
+char *string = "d*";
+double result1 = 0;
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_81
+char *string = "mod-2";
+double result1 = 0;
+result1 = validated(string);
+ck_assert_double_eq_tol(result1, 0.0000000, EPS);
+#test test_82
+char *string = "55mod4";
+double result1 = 0;
+result1 = validated(string);
+ck_assert_double_eq_tol(result1, 1, EPS);
+
+#test test_83
+char *string = "acos1";
+double result1 = 0;
+double result2 = acos(1);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+#test test_84
+char *string = "atan1";
+double result1 = 0;
+double result2 = atan(1);
+double x_number = 0;
+result1 = string_calc(string, x_number);
+ck_assert_double_eq_tol(result1, result2, EPS);
+
+#test test_85
+float credit_amount = 200000;
+int credit_term = 24;
+float credit_percentage_rate = 12;
+int repay_type = ANNUITY;
+float monthly_pay_first;
+float monthly_pay_last;
+float overpay;
+float total_repayment;
+credit_calc(credit_amount, credit_term, credit_percentage_rate, repay_type,
+            &monthly_pay_first, &monthly_pay_last, &overpay, &total_repayment);
+ck_assert_double_eq_tol(monthly_pay_first, 9414.70, EPS2);
+ck_assert_double_eq_tol(monthly_pay_last, 9414.70, EPS2);
+ck_assert_double_eq_tol(round(overpay), 25953, EPS2);
+ck_assert_double_eq_tol(round(total_repayment), 225953.00, EPS2);
+#test test_86
+float credit_amount = 200000;
+int credit_term = 24;
+float credit_percentage_rate = 12;
+int repay_type = DIFFERENTIAL;
+float monthly_pay_first;
+float monthly_pay_last;
+float overpay;
+float total_repayment;
+credit_calc(credit_amount, credit_term, credit_percentage_rate, repay_type,
+            &monthly_pay_first, &monthly_pay_last, &overpay, &total_repayment);
+ck_assert_double_eq_tol(monthly_pay_first, 10333.33, EPS2);
+ck_assert_double_eq_tol(monthly_pay_last, 8416.67, EPS2);
+ck_assert_double_eq_tol(round(overpay), 25000, EPS2);
+ck_assert_double_eq_tol(round(total_repayment), 225000.00, EPS2);
+
+#test test_87
+double Deposit_amount = 350000;
+int Deposit_term = 9;
+double Deposit_percent = 4.7;
+double Tax_rate = 13;
+int capitalize = CapQuarterly;
+double AccruedInterests;
+double TaxAmount;
+double DepositClosingAmount;
+deposit_calc(Deposit_amount, Deposit_term, Deposit_percent, Tax_rate,
+             capitalize, &AccruedInterests, &TaxAmount, &DepositClosingAmount);
+ck_assert_double_eq_tol(AccruedInterests, 12483.03, EPS2);
+ck_assert_double_eq_tol(TaxAmount, 1622.79, EPS2);
+ck_assert_double_eq_tol(DepositClosingAmount, 362483.03, EPS2);
+#test test_88
+double Deposit_amount = 350000;
+int Deposit_term = 9;
+double Deposit_percent = 4.7;
+double Tax_rate = 13;
+int capitalize = CapHalfYear;
+double AccruedInterests;
+double TaxAmount;
+double DepositClosingAmount;
+deposit_calc(Deposit_amount, Deposit_term, Deposit_percent, Tax_rate,
+             capitalize, &AccruedInterests, &TaxAmount, &DepositClosingAmount);
+ck_assert_double_eq_tol(AccruedInterests, 12409.70, EPS2);
+ck_assert_double_eq_tol(TaxAmount, 1613.26, EPS2);
+ck_assert_double_eq_tol(DepositClosingAmount, 362409.70, EPS2);
+
+#test test_89
+double Deposit_amount = 350000;
+int Deposit_term = 9;
+double Deposit_percent = 4.7;
+double Tax_rate = 13;
+double AccruedInterests;
+double TaxAmount;
+double DepositClosingAmount;
+deposit_calc_simple(Deposit_amount, Deposit_term, Deposit_percent, Tax_rate,
+                    &AccruedInterests, &TaxAmount, &DepositClosingAmount);
+ck_assert_double_eq_tol(AccruedInterests, 12337.50, EPS2);
+ck_assert_double_eq_tol(TaxAmount, 1603.88, EPS2);
+ck_assert_double_eq_tol(DepositClosingAmount, 362337.50, EPS2);
+
+#test test_90
+double Deposit_amount = 350000;
+int Deposit_term = 12;
+double Deposit_percent = 4.7;
+double Tax_rate = 13;
+int capitalize = CapMonthly;
+double AccruedInterests;
+double TaxAmount;
+double DepositClosingAmount;
+deposit_calc(Deposit_amount, Deposit_term, Deposit_percent, Tax_rate,
+             capitalize, &AccruedInterests, &TaxAmount, &DepositClosingAmount);
+ck_assert_double_eq_tol(AccruedInterests, 16809.03, EPS2);
+ck_assert_double_eq_tol(TaxAmount, 2185.17, EPS2);
+ck_assert_double_eq_tol(DepositClosingAmount, 366809.03, EPS2);
